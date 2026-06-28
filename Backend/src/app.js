@@ -9,10 +9,25 @@ const app = express()
 /**
  * - CORS so the React frontend (different origin) can call the API.
  * - credentials:true allows the auth cookie to be sent/received.
- * - Origin is read from FRONTEND_URL env, falling back to the Vite dev server.
+ * - FRONTEND_URL can hold one OR several comma-separated origins, e.g.
+ *   "http://localhost:5173,https://finledger-bank.netlify.app"
  */
+const allowedOrigins = (
+    process.env.FRONTEND_URL ||
+    "https://finledger-bank.netlify.app,http://localhost:5173"
+)
+    .split(",")
+    .map((o) => o.trim())
+    .filter(Boolean)
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: function (origin, callback) {
+        // Allow non-browser tools (no Origin header) and any whitelisted origin.
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true)
+        }
+        return callback(new Error("Not allowed by CORS"))
+    },
     credentials: true
 }))
 

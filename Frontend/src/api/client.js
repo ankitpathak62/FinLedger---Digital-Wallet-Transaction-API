@@ -1,6 +1,10 @@
 import axios from "axios"
 
-const baseURL = import.meta.env.VITE_API_URL || "https://finledger-digital-wallet-transaction-api-eo8t.onrender.com"
+// Falls back to the deployed Render backend when no VITE_API_URL is set
+// (e.g. a build without env vars). Local dev overrides this via .env.
+const baseURL =
+  import.meta.env.VITE_API_URL ||
+  "https://finledger-digital-wallet-transaction-api-eo8t.onrender.com"
 
 /**
  * Shared axios instance.
